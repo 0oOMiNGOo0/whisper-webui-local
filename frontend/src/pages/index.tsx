@@ -344,7 +344,7 @@ export default function Home() {
                 <ListItem className='flex gap-2 justify-start t text-black text-xs py-1.5 underline'>
                   <FolderOpenIcon color='black' className='min-w-[1rem] w-4' />
                   <span className='whitespace-pre overflow-hidden text-ellipsis w-[80%]'>
-                    {path.split('/')[4]}
+                    {path.split('/')[4].replace('_', '')}
                   </span>
                 </ListItem>
               </a>

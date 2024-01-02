@@ -1,4 +1,4 @@
-# Whisper WebUI
+# Whisper WebUI (local version)
 
 [Robust Speech Recognition via Large-Scale Weak Supervision, PMLR 2023](https://arxiv.org/abs/2212.04356), by Alec Radford, Jong Wook Kim, Tao Xu, Greg Brockman, Christine Mcleavey, Ilya Sutskever  
 [Original Github](https://github.com/openai/whisper)

@@ -11,7 +11,7 @@ import tqdm
 import threading
 from typing import Union
 
-import os, glob, shutil
+import os, glob
 import whisper
 import numpy as np
 from pathlib import Path
@@ -127,7 +127,7 @@ def AS():
 @sio.on('uploaded')
 def handle_message(data):
     print(data)
-    file_list = glob.glob('files/*')
+    file_list = [x for x in glob.glob('files/*') if 'wav' not in x]
     for file in file_list:
         video = VideoFileClip(file)
         audio = video.audio
@@ -141,14 +141,8 @@ def handle_message(data):
         options = dict(language=fromlanguage, word_timestamps=True, verbose=False)
         transcribe_options = dict(task="transcribe", **options)
         translate_options = dict(task="translate", **options)
-        options = {
-                    'max_line_width': None,
-                    'max_line_count': None,
-                    'highlight_words': False
-        }
-
             
-        if fromlanguage != 'en' and tolanguage != 'en' and fromlanguage != tolanguage:
+        if fromlanguage != 'en' and tolanguage != 'en' and fromlanguage != tolanguage: # translate X -> Y
             with create_progress_listener_handle(PrintingProgressListener()) as listener:
                 result = model.transcribe('files/audio.wav', **transcribe_options)
             progressbar = tqdm.tqdm(enumerate(result['segments']), total=len(result['segments']))
@@ -168,13 +162,25 @@ def handle_message(data):
             sio.send({'key': 1, 'current':100, 'total':100})
             sio.sleep(0)
                    
-        elif fromlanguage != 'en' and tolanguage == 'en':
+        elif fromlanguage != 'en' and tolanguage == 'en': # translate X -> en
             with create_progress_listener_handle(PrintingProgressListener()) as listener:
                 result = model.transcribe('files/audio.wav', **translate_options)
-        else:
+
+        elif fromlanguage == 'en' and tolanguage != fromlanguage: # translate en -> X
+            with create_progress_listener_handle(PrintingProgressListener()) as listener:
+                options = dict(language=tolanguage, word_timestamps=True, verbose=False)
+                transcribe_options = dict(task="transcribe", **options)
+                result = model.transcribe('files/audio.wav', **transcribe_options)
+
+        else: # transcribe X -> X
             with create_progress_listener_handle(PrintingProgressListener()) as listener:
                 result = model.transcribe('files/audio.wav', **transcribe_options)
         
+        options = {
+                    'max_line_width': None,
+                    'max_line_count': None,
+                    'highlight_words': False
+                 }
         if os.path.exists('files/audio.wav'):
             os.remove('files/audio.wav')
         if not os.path.exists('../frontend/public/output'):

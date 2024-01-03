@@ -39,3 +39,4 @@
 /backend/venv
 /backend/files
 /frontend/public/output
+/frontend/yarn.lock

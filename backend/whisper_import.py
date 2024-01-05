@@ -126,6 +126,8 @@ def AS():
 
 @sio.on('uploaded')
 def handle_message(data):
+    sio.send({'key':0, 'current':0, 'total':0})
+    sio.sleep(0)
     print(data)
     file_list = [x for x in glob.glob('files/*') if 'wav' not in x]
     for file in file_list:
@@ -188,8 +190,7 @@ def handle_message(data):
         
         if os.path.exists('files/audio.wav'):
             os.remove('files/audio.wav')
-        if not os.path.exists('../frontend/public/output'):
-            os.makedirs('../frontend/public/output')
+        os.makedirs('../frontend/public/output', exist_ok=True)
         output_directory = Path(f'../frontend/public/output/{file.split("/")[1].split(".")[0]}')
         srt_writer = get_writer("srt", '../frontend/public/output')
         srt_writer(result, output_directory, options)
@@ -202,5 +203,5 @@ def handle_message(data):
     sio.sleep(0)
     return
 
-sio.run(app, host='0.0.0.0', port=5050, debug=True)
+sio.run(app, host='0.0.0.0', port=8080, debug=True)
 # %%

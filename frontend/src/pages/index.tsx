@@ -155,7 +155,7 @@ export default function Home() {
   }, [options]);
 
   return (
-    <main className='flex p-4 gap-4 max-w-7xl w-full m-auto'>
+    <main className='flex p-4 gap-4 max-w-7xl m-auto'>
       <form
         className='bg-white w-500 h-500 flex flex-col gap-4  max-w-[410px]'
         onSubmit={onSubmitHandler}
@@ -299,8 +299,8 @@ export default function Home() {
           실행
         </Button>
       </form>
-      <div className='w-full bg-gray-50 rounded relative overflow-hidden'>
-        {progress ? (
+      <div className='w-96 bg-gray-50 rounded relative overflow-hidden'>
+        {progress?.current ? (
           <div className='absolute right-0 left-0 top-0 bottom-0 flex items-center justify-center bg-[#00000011] flex-col gap-2'>
             <ProgressCircle
               value={progress.current}
@@ -312,7 +312,7 @@ export default function Home() {
               </span>
             </ProgressCircle>
             <span className='flex text-xs text-gray-700 font-medium'>
-              {progress.current >= 100
+              {progress.current == 100
                 ? progress.key === 0
                   ? '처리 완료 ✅'
                   : '번역 완료 ✅'
@@ -320,6 +320,28 @@ export default function Home() {
                 ? '처리 중입니다...'
                 : '번역 중입니다..'}
             </span>
+          </div>
+        ) : outputFilePaths.length > 0 ? (
+          <div className='w-96 bg-gray-50 rounded relative p-4'>
+            <List>
+              {outputFilePaths.map((path, i) => (
+                <a
+                  href={path.replaceAll('../frontend/public', '')}
+                  download={path.replaceAll('../frontend/public/output', '')}
+                  key={i}
+                >
+                  <ListItem className='flex gap-2 justify-start t text-black text-xs py-1.5 underline'>
+                    <FolderOpenIcon
+                      color='black'
+                      className='min-w-[1rem] w-4'
+                    />
+                    <span className='whitespace-pre overflow-hidden text-ellipsis w-[80%]'>
+                      {path.split('/')[4].replaceAll('_', '')}
+                    </span>
+                  </ListItem>
+                </a>
+              ))}
+            </List>
           </div>
         ) : (
           <Image
@@ -331,27 +353,6 @@ export default function Home() {
           />
         )}
       </div>
-
-      {outputFilePaths.length > 0 && (
-        <div className='w-full max-w-[250px] bg-gray-50 rounded relative p-4'>
-          <List>
-            {outputFilePaths.map((path, i) => (
-              <a
-                href={path.replaceAll('../frontend/public', '')}
-                download={path.replaceAll('../frontend/public/output', '')}
-                key={i}
-              >
-                <ListItem className='flex gap-2 justify-start t text-black text-xs py-1.5 underline'>
-                  <FolderOpenIcon color='black' className='min-w-[1rem] w-4' />
-                  <span className='whitespace-pre overflow-hidden text-ellipsis w-[80%]'>
-                    {path.split('/')[4].replaceAll('_', '')}
-                  </span>
-                </ListItem>
-              </a>
-            ))}
-          </List>
-        </div>
-      )}
     </main>
   );
 }

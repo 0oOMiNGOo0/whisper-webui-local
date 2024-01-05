@@ -198,6 +198,8 @@ def handle_message(data):
 
     output_paths = glob.glob('../frontend/public/output/*')
     sio.emit('downloads', output_paths)
+    sio.send({'key':0})
+    sio.sleep(0)
     return
 
 sio.run(app, host='0.0.0.0', port=5050, debug=True)
